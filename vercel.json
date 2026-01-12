@@ -1,0 +1,37 @@
+{
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1",
+      "headers": {
+        "Cache-Control": "s-maxage=3600, stale-while-revalidate=86400"
+      }
+    }
+  ],
+  "functions": {
+    "backend/server.js": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  }
+}
